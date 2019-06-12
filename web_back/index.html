@@ -106,17 +106,17 @@
 
     <script src="./js/jquery-1.12.4.min.js"></script>
     <script>
-    $('#logout').on('click',function(){
-        $.ajax({
-            url:'https://autumnfish.cn/big/admin/logout',
-            type:'post',
-            success:function(xhrData){
-                if(xhrData.code == 200){
-                    window.location.href = './login.html';
+        $('#logout').on('click',function(){
+            $.ajax({
+                type:'post',
+                url:'https://autumnfish.cn/big/admin/logout',
+                success:function(backData){
+                    if(backData.code == 200){
+                        window.location.href ='./login.html';
+                    }
                 }
-            }
-        })
-    })
+            }); 
+        });
     </script>
 
 </body>
