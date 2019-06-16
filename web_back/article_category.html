@@ -66,7 +66,7 @@
                         <td class="text-center">
                             <a href="javascript:editTr({&quot;id&quot;:&quot;4&quot;,&quot;slug&quot;:&quot;travel&quot;,&quot;name&quot;:&quot;爱旅行&quot;});"
                                 class="btn btn-info btn-xs">编辑</a>
-                            <a href="javascript:deleteTr( 4 );" class="btn btn-danger btn-xs">删除</a>
+                            <a href="javascript:deleteTr( 4 );" class="btn btn-danger btn-xs ">删除</a>
                         </td>
                     </tr>
                 </tbody>
@@ -134,24 +134,25 @@
                 <td>{{$value.slug}}</td>
                 <td class="text-center">
                     <a href="javascript:editTr({&quot;id&quot;:&quot;1&quot;,&quot;slug&quot;:&quot;uncategorized&quot;,&quot;name&quot;:&quot;未分类&quot;});" class="btn btn-info btn-xs">编辑</a>
-                    <a href="javascript:deleteTr( {{$value.id}} );" class="btn btn-danger btn-xs">删除</a>
+                    <a href="javascript:void(0);" data-id="{{$value.id}}" class="btn btn-danger btn-xs btn-delete">删除</a>
                 </td>
         </tr>
         {{/each}}
     </script>
     <script>
         $(function () {
-            $.ajax({
-                type: 'get',
-                url: 'http://localhost:8000/admin/category_search',
-                success: function (backData) {
-                    console.log(backData);
-                    var resHTML = template('tmp_cate', backData);
-                    $('tbody').html(resHTML);
-                }
-            });
+            function getCategory() {
+                $.ajax({
+                    type: 'get',
+                    url: 'http://localhost:8000/admin/category_search',
+                    success: function (backData) {
+                        var resHTML = template('tmp_cate', backData);
+                        $('tbody').html(resHTML);
+                    }
+                });
+            }
 
-
+            getCategory();
             $('#model_add').click(function () {
                 var name = $('#recipient-name1').val();
                 var slug = $('#recipient-name2').val();
@@ -162,17 +163,9 @@
                         name: name,
                         slug: slug
                     },
-                    success: function (backdata) {
-                        console.log(backdata);
-                        $.ajax({
-                            type: 'get',
-                            url: 'http://localhost:8000/admin/category_search',
-                            success: function (backData) {
-                                console.log(backData);
-                                var resHTML = template('tmp_cate', backData);
-                                $('tbody').html(resHTML);
-                            }
-                        });
+                    success: function (backData) {
+                        // console.log(backData); 
+                        getCategory();
 
                     }
                 });
@@ -180,6 +173,25 @@
             });
 
 
+            $('tbody').on('click', 'a.btn-delete', function () {
+                var that = $(this);
+                var id = $(this).attr('data-id');
+                $.ajax({
+                    type: 'post',
+                    url: 'http://localhost:8000/admin/category_delete ',
+                    data: {
+                        id: id
+                    },
+                    success: function (backData) {
+                        // console.log(backData);
+                        // getCategory();
+                        if (backData.code == 200) {
+                            that.parent().parent().remove();
+                        }
+                    }
+                });
+
+            });
 
         });
 
